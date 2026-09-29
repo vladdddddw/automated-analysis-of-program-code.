@@ -1,0 +1,29 @@
+# Render Blueprint: описує весь сервіс, щоб розгорнути його однією кнопкою.
+# Створює: 1) базу PostgreSQL, 2) веб-сервіс (Docker): бекенд FastAPI + готовий React-фронтенд.
+databases:
+  - name: codeinspector-db
+    databaseName: codeinspector
+    user: codeinspector
+    region: frankfurt
+    plan: free
+
+services:
+  - type: web
+    name: codeinspector
+    runtime: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL          # адреса бази підставляється автоматично
+        fromDatabase:
+          name: codeinspector-db
+          property: connectionString
+      - key: SECRET_KEY            # секрет для підпису токенів Render генерує сам
+        generateValue: true
+      - key: APP_ENV
+        value: production
+      - key: SEED_DEMO_DATA        # створити демо-користувачів і приклади (можна вимкнути: false)
+        value: "true"
