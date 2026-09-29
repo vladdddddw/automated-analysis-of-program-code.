@@ -1,9 +1,12 @@
-export default function Card({ title, actions, children, className = "" }) {
+export default function Card({ title, subtitle, actions, children, className = "", flush = false }) {
   return (
-    <section className={`card ${className}`}>
+    <section className={`card ${flush ? "card-flush" : ""} ${className}`}>
       {(title || actions) && (
         <header className="card-header">
-          {title && <h2 className="card-title">{title}</h2>}
+          <div>
+            {title && <h2 className="card-title">{title}</h2>}
+            {subtitle && <p className="card-sub">{subtitle}</p>}
+          </div>
           {actions && <div className="card-actions">{actions}</div>}
         </header>
       )}

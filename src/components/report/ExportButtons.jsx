@@ -1,3 +1,4 @@
+import { Braces, FileText } from "lucide-react";
 import { SEVERITIES } from "../../api/seed.js";
 import { downloadFile, reportToHtml } from "../../utils/format.js";
 import { useToast } from "../../context/ToastContext.jsx";
@@ -20,8 +21,8 @@ export default function ExportButtons({ analysis }) {
 
   return (
     <>
-      <Button variant="secondary" onClick={exportJson}>Експорт JSON</Button>
-      <Button variant="secondary" onClick={exportHtml}>Експорт HTML</Button>
+      <Button variant="secondary" onClick={exportJson}><Braces size={16} />JSON</Button>
+      <Button variant="secondary" onClick={exportHtml}><FileText size={16} />HTML</Button>
     </>
   );
 }

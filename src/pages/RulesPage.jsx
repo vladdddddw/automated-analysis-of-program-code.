@@ -1,23 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Bug, Lock, Paintbrush, Pencil, RotateCcw, ShieldAlert, Wrench, LayoutGrid } from "lucide-react";
 import { rulesApi } from "../api/mockApi.js";
 import { CATEGORIES } from "../api/seed.js";
 import { useAsync } from "../hooks/useAsync.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useToast } from "../context/ToastContext.jsx";
-import Card from "../components/common/Card.jsx";
 import Button from "../components/common/Button.jsx";
+import PageHeader from "../components/common/PageHeader.jsx";
+import Tabs from "../components/common/Tabs.jsx";
 import { SeverityBadge } from "../components/common/Badge.jsx";
 import { ConfirmModal } from "../components/common/Modal.jsx";
 import { ErrorState, Spinner } from "../components/common/Feedback.jsx";
 import RuleForm from "../components/rules/RuleForm.jsx";
 
-// Каталог правил. Редагувати може лише адміністратор (форма + перемикач з оптимістичним оновленням).
+const CAT_ICONS = { security: ShieldAlert, reliability: Bug, maintainability: Wrench, style: Paintbrush };
+
+// Каталог правил у вигляді карток із вкладками за категоріями.
+// Редагувати може лише адміністратор (форма + перемикач з оптимістичним оновленням).
 export default function RulesPage() {
   const { user } = useAuth();
   const toast = useToast();
   const isAdmin = user.role === "admin";
   const { data, loading, error, reload } = useAsync(() => rulesApi.list(), []); // GET /api/rules
   const [rules, setRules] = useState([]);
+  const [category, setCategory] = useState("all");
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -25,6 +31,9 @@ export default function RulesPage() {
   useEffect(() => {
     if (data) setRules(data);
   }, [data]);
+
+  const shown = useMemo(() => rules.filter((r) => category === "all" || r.category === category), [rules, category]);
+  const count = (c) => rules.filter((r) => c === "all" || r.category === c).length;
 
   // PUT /api/rules/{id}: спочатку оновлюємо інтерфейс, у разі помилки повертаємо попередній стан
   const save = async (rule, patch) => {
@@ -62,43 +71,50 @@ export default function RulesPage() {
 
   return (
     <>
-      <div className="page-head">
-        <h1 className="page-title">Правила перевірки</h1>
-        {isAdmin && <Button variant="secondary" onClick={() => setConfirmReset(true)}>Скинути до типових</Button>}
-      </div>
-      {!isAdmin && <div className="alert alert-info">Перегляд доступний усім користувачам, змінювати правила може лише адміністратор (увійдіть як admin@example.com).</div>}
+      <PageHeader title="Правила перевірки" text="Що саме шукає аналізатор і за якими порогами">
+        {isAdmin && <Button variant="secondary" onClick={() => setConfirmReset(true)}><RotateCcw size={16} />Скинути до типових</Button>}
+      </PageHeader>
+      {!isAdmin && (
+        <div className="notice"><Lock size={18} /><div>Перегляд доступний усім, змінювати правила може лише адміністратор (увійдіть як <b>admin@example.com</b>).</div></div>
+      )}
 
-      <Card>
-        {loading && <Spinner />}
-        {error && <ErrorState error={error} onRetry={reload} />}
-        {!loading && !error && (
-          <div className="table-wrap">
-            <table className="table table-stack">
-              <thead>
-                <tr><th>Код</th><th>Правило</th><th>Категорія</th><th>Серйозність</th><th>Поріг</th><th>Стан</th>{isAdmin && <th aria-label="Дії" />}</tr>
-              </thead>
-              <tbody>
-                {rules.map((r) => (
-                  <tr key={r.id} className={r.enabled ? "" : "row-off"}>
-                    <td data-label="Код" className="mono">{r.id}</td>
-                    <td data-label="Правило"><strong>{r.name}</strong><div className="muted small">{r.description}</div></td>
-                    <td data-label="Категорія">{CATEGORIES[r.category]}</td>
-                    <td data-label="Серйозність"><SeverityBadge severity={r.severity} /></td>
-                    <td data-label="Поріг" className="num">{r.threshold ?? "—"}</td>
-                    <td data-label="Стан">
-                      <label className="switch" title={isAdmin ? "Увімкнути/вимкнути" : "Лише перегляд"}>
-                        <input type="checkbox" checked={r.enabled} disabled={!isAdmin} onChange={(e) => save(r, { enabled: e.target.checked })} aria-label={`Правило ${r.id}`} />
-                        <span className="slider" />
-                      </label>
-                    </td>
-                    {isAdmin && <td className="actions-cell"><Button variant="ghost" onClick={() => setEditing(r)}>Редагувати</Button></td>}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      <Tabs label="Категорії правил" active={category} onChange={setCategory} items={[
+        { id: "all", label: "Усі", icon: LayoutGrid, count: count("all") },
+        ...Object.entries(CATEGORIES).map(([id, label]) => ({ id, label, icon: CAT_ICONS[id], count: count(id) })),
+      ]} />
+
+      {loading && <Spinner />}
+      {error && <ErrorState error={error} onRetry={reload} />}
+      {!loading && !error && (
+        <div className="rule-grid">
+          {shown.map((r) => {
+            const Icon = CAT_ICONS[r.category];
+            return (
+              <article key={r.id} className={`rule-card ${r.enabled ? "" : "rule-off"}`}>
+                <header>
+                  <span className={`rule-ico cat-${r.category}`}><Icon size={20} /></span>
+                  <div className="grow">
+                    <span className="mono rule-id">{r.id}</span>
+                    <h3>{r.name}</h3>
+                  </div>
+                  <label className="switch" title={isAdmin ? "Увімкнути/вимкнути" : "Лише перегляд"}>
+                    <input type="checkbox" checked={r.enabled} disabled={!isAdmin} onChange={(e) => save(r, { enabled: e.target.checked })} aria-label={`Правило ${r.id}`} />
+                    <span className="slider" />
+                  </label>
+                </header>
+                <p className="muted">{r.description}</p>
+                <footer>
+                  <SeverityBadge severity={r.severity} />
+                  <span className="pill">{CATEGORIES[r.category]}</span>
+                  {r.threshold !== null && <span className="pill pill-th">поріг {r.threshold}</span>}
+                  <span className="grow" />
+                  {isAdmin && <button className="icon-btn" onClick={() => setEditing(r)} aria-label={`Редагувати ${r.id}`} title="Редагувати"><Pencil size={16} /></button>}
+                </footer>
+              </article>
+            );
+          })}
+        </div>
+      )}
 
       {editing && <RuleForm rule={editing} saving={saving} onSave={submitForm} onClose={() => setEditing(null)} />}
       {confirmReset && (

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { AlertTriangle, X } from "lucide-react";
 import Button from "./Button.jsx";
 
 export default function Modal({ title, onClose, children, footer }) {
@@ -14,7 +15,7 @@ export default function Modal({ title, onClose, children, footer }) {
       <div className="modal" role="dialog" aria-modal="true" aria-label={title}>
         <header className="modal-header">
           <h3>{title}</h3>
-          <button className="icon-btn" onClick={onClose} aria-label="Закрити">×</button>
+          <button className="icon-btn" onClick={onClose} aria-label="Закрити"><X size={20} /></button>
         </header>
         <div className="modal-body">{children}</div>
         {footer && <footer className="modal-footer">{footer}</footer>}
@@ -36,7 +37,10 @@ export function ConfirmModal({ title, text, confirmText = "Підтвердит�
         </>
       }
     >
-      <p>{text}</p>
+      <div className="confirm">
+        <span className="confirm-icon"><AlertTriangle size={24} /></span>
+        <p>{text}</p>
+      </div>
     </Modal>
   );
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Archive, FileCode2, GitCompare, Plus, Search, Trash2, Wand2 } from "lucide-react";
 import { analysesApi } from "../api/mockApi.js";
 import { useAsync } from "../hooks/useAsync.js";
 import { useToast } from "../context/ToastContext.jsx";
@@ -8,10 +9,13 @@ import Card from "../components/common/Card.jsx";
 import Button from "../components/common/Button.jsx";
 import Modal, { ConfirmModal } from "../components/common/Modal.jsx";
 import Pagination from "../components/common/Pagination.jsx";
+import PageHeader from "../components/common/PageHeader.jsx";
+import ScoreRing from "../components/common/ScoreRing.jsx";
 import { StatusBadge } from "../components/common/Badge.jsx";
 import { EmptyState, ErrorState, Spinner } from "../components/common/Feedback.jsx";
 
 const PAGE_SIZE = 5;
+const SOURCE_ICONS = { file: FileCode2, archive: Archive, snippet: Wand2 };
 
 // Екран зі списком даних: пошук, фільтри, сортування, пагінація, видалення, порівняння двох аналізів.
 export default function HistoryPage() {
@@ -62,17 +66,14 @@ export default function HistoryPage() {
 
   return (
     <>
-      <div className="page-head">
-        <h1 className="page-title">Історія аналізів</h1>
-        <div className="head-actions">
-          <Button variant="secondary" disabled={picked.length !== 2} onClick={() => setCompare(true)}>Порівняти вибрані ({picked.length}/2)</Button>
-          <Link to="/analyze"><Button>+ Новий аналіз</Button></Link>
-        </div>
-      </div>
+      <PageHeader title="Історія аналізів" text="Усі запуски аналізу: пошук, порівняння та видалення">
+        <Button variant="secondary" disabled={picked.length !== 2} onClick={() => setCompare(true)}><GitCompare size={16} />Порівняти ({picked.length}/2)</Button>
+        <Link to="/analyze"><Button><Plus size={17} />Новий аналіз</Button></Link>
+      </PageHeader>
 
       <Card>
         <div className="filters">
-          <input type="search" placeholder="Пошук за назвою…" value={query} onChange={resetPage(setQuery)} aria-label="Пошук" />
+          <label className="search"><Search size={16} /><input type="search" placeholder="Пошук за назвою…" value={query} onChange={resetPage(setQuery)} aria-label="Пошук" /></label>
           <div className="filter-inputs">
             <select value={status} onChange={resetPage(setStatus)} aria-label="Статус">
               <option value="all">Усі статуси</option>
@@ -101,32 +102,40 @@ export default function HistoryPage() {
                 <thead>
                   <tr>
                     <th aria-label="Вибір" />
-                    <th>Назва</th>
+                    <th>Аналіз</th>
                     <th className="sortable" onClick={() => setSortDesc((v) => !v)}>Дата {sortDesc ? "▼" : "▲"}</th>
-                    <th>Джерело</th>
-                    <th>Файлів</th>
-                    <th>Зауважень</th>
+                    <th>Оцінка</th>
+                    <th className="num">Файлів</th>
+                    <th className="num">Зауважень</th>
                     <th>Статус</th>
                     <th aria-label="Дії" />
                   </tr>
                 </thead>
                 <tbody>
-                  {pageRows.map((a) => (
-                    <tr key={a.id} onClick={() => navigate(`/report/${a.id}`)}>
-                      <td data-label="Порівняння" onClick={(e) => e.stopPropagation()}>
-                        <input type="checkbox" checked={picked.includes(a.id)} onChange={() => togglePick(a.id)} aria-label={`Вибрати ${a.title}`} />
-                      </td>
-                      <td data-label="Назва"><strong>{a.title}</strong><div className="muted small">{a.owner}</div></td>
-                      <td data-label="Дата">{formatDate(a.createdAt)}</td>
-                      <td data-label="Джерело">{SOURCE_LABELS[a.sourceType]}</td>
-                      <td data-label="Файлів" className="num">{a.filesCount}</td>
-                      <td data-label="Зауважень" className="num">{a.issuesCount}</td>
-                      <td data-label="Статус"><StatusBadge status={a.status} /></td>
-                      <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" onClick={() => setToDelete(a)}>Видалити</Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {pageRows.map((a) => {
+                    const Icon = SOURCE_ICONS[a.sourceType];
+                    return (
+                      <tr key={a.id} onClick={() => navigate(`/report/${a.id}`)}>
+                        <td data-label="Порівняння" onClick={(e) => e.stopPropagation()}>
+                          <input type="checkbox" checked={picked.includes(a.id)} onChange={() => togglePick(a.id)} aria-label={`Вибрати ${a.title}`} />
+                        </td>
+                        <td data-label="Аналіз">
+                          <div className="cell-title">
+                            <span className="cell-ico"><Icon size={18} /></span>
+                            <span><strong>{a.title}</strong><span className="muted small block">{SOURCE_LABELS[a.sourceType]} · {a.owner}</span></span>
+                          </div>
+                        </td>
+                        <td data-label="Дата">{formatDate(a.createdAt)}</td>
+                        <td data-label="Оцінка"><ScoreRing score={a.score} size={40} stroke={5} showLabel={false} /></td>
+                        <td data-label="Файлів" className="num">{a.filesCount}</td>
+                        <td data-label="Зауважень" className="num">{a.issuesCount}</td>
+                        <td data-label="Статус"><StatusBadge status={a.status} /></td>
+                        <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
+                          <button className="icon-btn danger" onClick={() => setToDelete(a)} aria-label={`Видалити ${a.title}`} title="Видалити"><Trash2 size={17} /></button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -142,21 +151,26 @@ export default function HistoryPage() {
 
       {compare && pair.length === 2 && pair.every(Boolean) && (
         <Modal title="Порівняння аналізів" onClose={() => setCompare(false)} footer={<Button onClick={() => setCompare(false)}>Закрити</Button>}>
-          <table className="table">
-            <thead><tr><th>Показник</th><th>{pair[0].title}</th><th>{pair[1].title}</th><th>Зміна</th></tr></thead>
-            <tbody>
-              {[["Зауважень", "issuesCount"], ["Макс. складність", "maxComplexity"], ["Час аналізу, мс", "durationMs"]].map(([label, key]) => {
-                const d = pair[1][key] - pair[0][key];
-                return (
-                  <tr key={key}>
-                    <td>{label}</td><td className="num">{pair[0][key]}</td><td className="num">{pair[1][key]}</td>
-                    <td className={`num ${d < 0 ? "delta-good" : d > 0 ? "delta-bad" : ""}`}>{d > 0 ? `+${d}` : d}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          <p className="muted small">Від’ємна зміна кількості зауважень і складності означає покращення якості.</p>
+          <div className="table-wrap">
+            <table className="table">
+              <thead><tr><th>Показник</th><th>{pair[0].title}</th><th>{pair[1].title}</th><th className="num">Зміна</th></tr></thead>
+              <tbody>
+                {[["Оцінка якості", "score", true], ["Зауважень", "issuesCount"], ["Макс. складність", "maxComplexity"], ["Час аналізу, мс", "durationMs"]].map(([label, key, higherBetter]) => {
+                  const a = pair[0][key] ?? 0;
+                  const b = pair[1][key] ?? 0;
+                  const d = b - a;
+                  const good = higherBetter ? d > 0 : d < 0;
+                  return (
+                    <tr key={key}>
+                      <td>{label}</td><td className="num">{pair[0][key] ?? "—"}</td><td className="num">{pair[1][key] ?? "—"}</td>
+                      <td className={`num ${d === 0 ? "" : good ? "delta-good" : "delta-bad"}`}>{d > 0 ? `+${d}` : d}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="muted small">Зелена зміна означає покращення: вища оцінка, менше зауважень і нижча складність.</p>
         </Modal>
       )}
     </>

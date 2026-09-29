@@ -6,7 +6,7 @@ import Header from "./Header.jsx";
 import Sidebar from "./Sidebar.jsx";
 import Footer from "./Footer.jsx";
 
-// Каркас застосунку для авторизованих користувачів: Header + Sidebar + MainContent + Footer.
+// Каркас застосунку для авторизованих користувачів: Sidebar + (Header + MainContent + Footer).
 export default function Layout() {
   const { user, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,6 +14,7 @@ export default function Layout() {
 
   useEffect(() => {
     setMenuOpen(false);
+    window.scrollTo({ top: 0 });
   }, [location.pathname]);
 
   if (loading) return <Spinner label="Перевірка сесії…" />;
@@ -21,14 +22,14 @@ export default function Layout() {
 
   return (
     <div className="app-shell">
-      <Header onMenu={() => setMenuOpen((v) => !v)} />
-      <div className="app-body">
-        <Sidebar open={menuOpen} onNavigate={() => setMenuOpen(false)} />
-        <main className="main">
+      <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <div className="app-content">
+        <Header onMenu={() => setMenuOpen((v) => !v)} />
+        <main className="main" key={location.pathname}>
           <Outlet />
         </main>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }

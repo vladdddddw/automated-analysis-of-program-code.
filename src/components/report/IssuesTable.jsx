@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { SEVERITIES } from "../../api/seed.js";
 import { SeverityBadge } from "../common/Badge.jsx";
 import { EmptyState } from "../common/Feedback.jsx";
@@ -46,7 +47,7 @@ export default function IssuesTable({ issues, selectedKey, onSelect }) {
             <option value="all">Усі правила</option>
             {rules.map((r) => <option key={r} value={r}>{r}</option>)}
           </select>
-          <input type="search" placeholder="Пошук у зауваженнях…" value={query} onChange={(e) => setQuery(e.target.value)} />
+          <label className="search"><Search size={16} /><input type="search" placeholder="Пошук у зауваженнях…" value={query} onChange={(e) => setQuery(e.target.value)} /></label>
         </div>
       </div>
 

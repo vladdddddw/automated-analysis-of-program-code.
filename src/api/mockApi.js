@@ -4,6 +4,7 @@
 
 import { DEFAULT_RULES, DEMO_USERS, SAMPLE_CODE, IMPROVED_CODE, PROJECT_MAIN, PROJECT_UTILS } from "./seed.js";
 import { analyzeFiles } from "./analyzer.js";
+import { qualityScore } from "../utils/score.js";
 
 const DB_KEY = "ca_mock_db_v1";
 const SESSION_KEY = "ca_mock_session_v1";
@@ -109,6 +110,7 @@ const summary = (a, db) => ({
   filesCount: a.files.length,
   issuesCount: a.files.reduce((s, f) => s + f.issues.length, 0),
   maxComplexity: a.files.reduce((m, f) => Math.max(m, f.maxComplexity), 0),
+  score: a.status === "done" ? qualityScore(a.files.flatMap((f) => f.issues)) : null,
   owner: db.users.find((u) => u.id === a.userId)?.email ?? "—",
 });
 
@@ -124,6 +126,40 @@ export const analysesApi = {
     const db = loadDb();
     const user = currentUser(db);
     return visible(db, user).map((a) => summary(a, db)).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  },
+  // GET /api/stats – зведена статистика для екрана «Огляд»
+  async stats() {
+    await delay(300);
+    const db = loadDb();
+    const user = currentUser(db);
+    const list = visible(db, user).slice().sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+    const severity = { info: 0, low: 0, medium: 0, high: 0, critical: 0 };
+    const rules = {};
+    list.forEach((a) =>
+      a.files.forEach((f) =>
+        f.issues.forEach((i) => {
+          severity[i.severity] += 1;
+          rules[i.ruleId] = (rules[i.ruleId] || 0) + 1;
+        }),
+      ),
+    );
+    const done = list.filter((a) => a.status === "done");
+    const sums = list.map((a) => summary(a, db));
+    const scores = sums.filter((s) => s.score !== null).map((s) => s.score);
+    return {
+      total: list.length,
+      issues: Object.values(severity).reduce((s, n) => s + n, 0),
+      critical: severity.critical + severity.high,
+      avgScore: scores.length ? Math.round(scores.reduce((s, n) => s + n, 0) / scores.length) : null,
+      doneCount: done.length,
+      severity,
+      topRules: Object.entries(rules)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([id, count]) => ({ id, name: db.rules.find((r) => r.id === id)?.name ?? id, count })),
+      timeline: sums.map((s) => ({ id: s.id, title: s.title, issues: s.issuesCount, score: s.score })),
+      recent: sums.slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4),
+    };
   },
   // GET /api/analyses/{id}
   async get(id) {

@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Archive, Cpu, FileCode2, LineChart, Rocket, Trash2, UploadCloud, Wand2, X } from "lucide-react";
 import { analysesApi } from "../api/mockApi.js";
 import { SAMPLE_CODE } from "../api/seed.js";
 import { useToast } from "../context/ToastContext.jsx";
@@ -7,6 +8,8 @@ import { MAX_FILE_BYTES } from "../utils/validation.js";
 import Card from "../components/common/Card.jsx";
 import Button from "../components/common/Button.jsx";
 import FormField from "../components/common/FormField.jsx";
+import PageHeader from "../components/common/PageHeader.jsx";
+import Tabs from "../components/common/Tabs.jsx";
 
 // Екран запуску аналізу: вставка фрагмента або завантаження .py-файлів.
 export default function AnalyzePage() {
@@ -64,15 +67,12 @@ export default function AnalyzePage() {
 
   return (
     <>
-      <h1 className="page-title">Новий аналіз</h1>
+      <PageHeader title="Новий аналіз" text="Вставте код або завантажте файли – результат буде готовий за кілька секунд" />
       <div className="grid-2">
-        <Card title="Вихідний код">
+        <Card>
           <form onSubmit={submit} noValidate>
-            <div className="tabs" role="tablist">
-              <button type="button" role="tab" aria-selected={mode === "snippet"} className={`tab ${mode === "snippet" ? "tab-on" : ""}`} onClick={() => setMode("snippet")}>Фрагмент</button>
-              <button type="button" role="tab" aria-selected={mode === "file"} className={`tab ${mode === "file" ? "tab-on" : ""}`} onClick={() => setMode("file")}>Файли .py</button>
-              <button type="button" role="tab" className="tab" disabled title="Доступно після підключення бекенду">Архів .zip</button>
-            </div>
+            <Tabs label="Тип джерела" active={mode} onChange={setMode}
+              items={[{ id: "snippet", label: "Фрагмент", icon: Wand2 }, { id: "file", label: "Файли .py", icon: FileCode2 }]} />
 
             <FormField label="Назва аналізу" hint="Необов’язково">
               {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Наприклад, lab2_solution.py" maxLength={80} />}
@@ -86,7 +86,10 @@ export default function AnalyzePage() {
                       onChange={(e) => { setCode(e.target.value); setError(""); }} placeholder="Вставте код тут…" />
                     <div className="row-between">
                       <span className="muted small">Рядків: {code ? code.split("\n").length : 0}</span>
-                      <Button type="button" variant="ghost" onClick={() => { setCode(SAMPLE_CODE); setError(""); }}>Вставити приклад</Button>
+                      <div className="row-gap">
+                        {code && <Button type="button" variant="ghost" onClick={() => setCode("")}><Trash2 size={15} />Очистити</Button>}
+                        <Button type="button" variant="ghost" onClick={() => { setCode(SAMPLE_CODE); setError(""); }}><Wand2 size={15} />Вставити приклад</Button>
+                      </div>
                     </div>
                   </>
                 )}
@@ -99,6 +102,7 @@ export default function AnalyzePage() {
                   onDrop={(e) => { e.preventDefault(); setDragging(false); addFiles(e.dataTransfer.files); }}
                   onClick={() => fileInput.current?.click()} role="button" tabIndex={0}
                   onKeyDown={(e) => e.key === "Enter" && fileInput.current?.click()}>
+                  <span className="drop-icon"><UploadCloud size={30} /></span>
                   <strong>Перетягніть файли сюди або натисніть для вибору</strong>
                   <span className="muted small">Лише .py, до 1 МБ кожен</span>
                   <input ref={fileInput} type="file" accept=".py" multiple hidden onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
@@ -107,9 +111,10 @@ export default function AnalyzePage() {
                   <ul className="file-list">
                     {files.map((f) => (
                       <li key={f.path}>
-                        <span className="mono">{f.path}</span>
+                        <FileCode2 size={18} className="file-ico" />
+                        <span className="mono grow">{f.path}</span>
                         <span className="muted small">{f.content.split("\n").length} рядків</span>
-                        <button type="button" className="icon-btn" aria-label={`Видалити ${f.path}`} onClick={() => setFiles((l) => l.filter((x) => x.path !== f.path))}>×</button>
+                        <button type="button" className="icon-btn" aria-label={`Видалити ${f.path}`} onClick={() => setFiles((l) => l.filter((x) => x.path !== f.path))}><X size={16} /></button>
                       </li>
                     ))}
                   </ul>
@@ -119,22 +124,24 @@ export default function AnalyzePage() {
 
             {error && <div className="alert alert-error" role="alert">{error}</div>}
             <div className="form-actions">
-              <Button type="submit" loading={loading}>{loading ? "Аналіз виконується…" : "Аналізувати"}</Button>
+              <Button type="submit" loading={loading} className="btn-lg"><Rocket size={18} />{loading ? "Аналіз виконується…" : "Аналізувати"}</Button>
             </div>
           </form>
         </Card>
 
-        <Card title="Як це працює">
-          <ol className="steps">
-            <li>Вставте код або завантажте файли .py.</li>
-            <li>Код розбирається в абстрактне синтаксичне дерево (AST) і перевіряється за увімкненими правилами.</li>
-            <li>Ви отримуєте зауваження, метрики та графіки; результат зберігається в історії.</li>
-          </ol>
-          <div className="alert alert-info">
-            <strong>Демо-режим.</strong> Бекенд не підключено: аналіз виконується у браузері спрощеним алгоритмом, дані
-            зберігаються лише у вашому браузері. Код нікуди не надсилається.
+        <div className="stack">
+          <Card title="Як це працює">
+            <ol className="steps">
+              <li><span className="step-ico"><FileCode2 size={18} /></span><div><strong>Завантаження</strong><span>Вставте код або додайте файли .py</span></div></li>
+              <li><span className="step-ico"><Cpu size={18} /></span><div><strong>Розбір AST</strong><span>Код перетворюється на синтаксичне дерево й перевіряється за правилами</span></div></li>
+              <li><span className="step-ico"><LineChart size={18} /></span><div><strong>Звіт</strong><span>Зауваження, метрики, графіки та поради збережуться в історії</span></div></li>
+            </ol>
+          </Card>
+          <div className="notice">
+            <Archive size={18} />
+            <div><strong>Демо-режим.</strong> Бекенд не підключено: аналіз виконується у браузері спрощеним алгоритмом, дані зберігаються лише у вашому браузері. Код нікуди не надсилається.</div>
           </div>
-        </Card>
+        </div>
       </div>
     </>
   );
