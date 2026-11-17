@@ -1,0 +1,868 @@
+{
+ "analyses_router": {
+  "loc": 93,
+  "sloc": 74,
+  "max_complexity": 8,
+  "max_nesting": 1,
+  "syntax_error": null,
+  "functions": [
+   [
+    "_get_visible",
+    22,
+    26,
+    2,
+    1,
+    3
+   ],
+   [
+    "list_analyses",
+    30,
+    32,
+    2,
+    0,
+    2
+   ],
+   [
+    "get_analysis",
+    36,
+    37,
+    1,
+    0,
+    3
+   ],
+   [
+    "create_analysis",
+    41,
+    50,
+    8,
+    1,
+    3
+   ],
+   [
+    "create_from_archive",
+    54,
+    67,
+    4,
+    1,
+    4
+   ],
+   [
+    "delete_analysis",
+    71,
+    74,
+    1,
+    0,
+    3
+   ],
+   [
+    "export_analysis",
+    78,
+    88,
+    3,
+    1,
+    4
+   ],
+   [
+    "stats",
+    92,
+    93,
+    1,
+    0,
+    2
+   ]
+  ],
+  "issues": [
+   [
+    "AC009",
+    "info",
+    30,
+    "Функція list_analyses без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    36,
+    "Функція get_analysis без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    41,
+    "Функція create_analysis без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    54,
+    "Функція create_from_archive без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    71,
+    "Функція delete_analysis без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    78,
+    "Функція export_analysis без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    92,
+    "Функція stats без docstring"
+   ]
+  ]
+ },
+ "analyzer_before": {
+  "loc": 262,
+  "sloc": 209,
+  "max_complexity": 43,
+  "max_nesting": 4,
+  "syntax_error": null,
+  "functions": [
+   [
+    "status",
+    58,
+    60,
+    4,
+    0,
+    0
+   ],
+   [
+    "_walk_own",
+    70,
+    78,
+    3,
+    2,
+    1
+   ],
+   [
+    "cyclomatic_complexity",
+    81,
+    93,
+    6,
+    2,
+    1
+   ],
+   [
+    "nesting_depth",
+    96,
+    127,
+    1,
+    0,
+    1
+   ],
+   [
+    "visit",
+    100,
+    124,
+    11,
+    3,
+    2
+   ],
+   [
+    "count_params",
+    130,
+    134,
+    6,
+    0,
+    1
+   ],
+   [
+    "_unused_imports",
+    138,
+    156,
+    23,
+    4,
+    1
+   ],
+   [
+    "_is_mutable_default",
+    159,
+    162,
+    4,
+    1,
+    1
+   ],
+   [
+    "_target_name",
+    165,
+    170,
+    3,
+    1,
+    1
+   ],
+   [
+    "analyze_source",
+    173,
+    256,
+    43,
+    4,
+    3
+   ],
+   [
+    "cfg",
+    191,
+    193,
+    3,
+    0,
+    1
+   ],
+   [
+    "add",
+    195,
+    198,
+    2,
+    1,
+    3
+   ],
+   [
+    "threshold",
+    200,
+    202,
+    3,
+    0,
+    2
+   ],
+   [
+    "analyze_files",
+    259,
+    262,
+    2,
+    0,
+    2
+   ]
+  ],
+  "issues": [
+   [
+    "AC009",
+    "info",
+    15,
+    "Клас RuleConfig без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    22,
+    "Клас FunctionInfo без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    32,
+    "Клас IssueInfo без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    40,
+    "Клас FileResult без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    53,
+    "Клас AnalysisResult без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    58,
+    "Функція status без docstring"
+   ],
+   [
+    "AC006",
+    "medium",
+    100,
+    "Цикломатична складність 11 перевищує поріг 10"
+   ],
+   [
+    "AC009",
+    "info",
+    100,
+    "Функція visit без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    130,
+    "Функція count_params без docstring"
+   ],
+   [
+    "AC006",
+    "medium",
+    138,
+    "Цикломатична складність 23 перевищує поріг 10"
+   ],
+   [
+    "AC005",
+    "low",
+    173,
+    "Функція analyze_source має 84 рядків (поріг 50)"
+   ],
+   [
+    "AC006",
+    "medium",
+    173,
+    "Цикломатична складність 43 перевищує поріг 10"
+   ],
+   [
+    "AC009",
+    "info",
+    173,
+    "Функція analyze_source без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    191,
+    "Функція cfg без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    195,
+    "Функція add без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    200,
+    "Функція threshold без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    259,
+    "Функція analyze_files без docstring"
+   ]
+  ]
+ },
+ "defects": {
+  "loc": 167,
+  "sloc": 139,
+  "max_complexity": 15,
+  "max_nesting": 7,
+  "syntax_error": null,
+  "functions": [
+   [
+    "method",
+    16,
+    17,
+    1,
+    0,
+    5
+   ],
+   [
+    "mutable",
+    20,
+    21,
+    1,
+    0,
+    5
+   ],
+   [
+    "risky",
+    24,
+    36,
+    4,
+    1,
+    1
+   ],
+   [
+    "too_many",
+    39,
+    40,
+    1,
+    0,
+    8
+   ],
+   [
+    "branchy",
+    43,
+    62,
+    15,
+    3,
+    2
+   ],
+   [
+    "deep",
+    65,
+    78,
+    7,
+    7,
+    1
+   ],
+   [
+    "long_function",
+    81,
+    138,
+    1,
+    0,
+    0
+   ],
+   [
+    "fetch",
+    141,
+    144,
+    2,
+    2,
+    1
+   ],
+   [
+    "_private",
+    147,
+    148,
+    1,
+    0,
+    0
+   ],
+   [
+    "public_without_doc",
+    151,
+    152,
+    1,
+    0,
+    0
+   ],
+   [
+    "outer",
+    162,
+    167,
+    1,
+    0,
+    0
+   ],
+   [
+    "inner",
+    164,
+    166,
+    2,
+    1,
+    2
+   ]
+  ],
+  "issues": [
+   [
+    "AC001",
+    "low",
+    2,
+    "Імпорт sys не використовується"
+   ],
+   [
+    "AC001",
+    "low",
+    3,
+    "Імпорт js не використовується"
+   ],
+   [
+    "AC001",
+    "low",
+    4,
+    "Імпорт List не використовується"
+   ],
+   [
+    "AC010",
+    "high",
+    8,
+    "Секрет записано безпосередньо в коді"
+   ],
+   [
+    "AC010",
+    "high",
+    9,
+    "Секрет записано безпосередньо в коді"
+   ],
+   [
+    "AC009",
+    "info",
+    13,
+    "Клас Config без docstring"
+   ],
+   [
+    "AC010",
+    "high",
+    14,
+    "Секрет записано безпосередньо в коді"
+   ],
+   [
+    "AC009",
+    "info",
+    16,
+    "Функція method без docstring"
+   ],
+   [
+    "AC003",
+    "medium",
+    20,
+    "Змінне значення за замовчуванням у функції mutable"
+   ],
+   [
+    "AC009",
+    "info",
+    20,
+    "Функція mutable без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    24,
+    "Функція risky без docstring"
+   ],
+   [
+    "AC004",
+    "critical",
+    26,
+    "Використано eval() з довільним рядком"
+   ],
+   [
+    "AC004",
+    "critical",
+    27,
+    "Використано exec() з довільним рядком"
+   ],
+   [
+    "AC002",
+    "medium",
+    28,
+    "Порожній блок except без типу винятку"
+   ],
+   [
+    "AC002",
+    "medium",
+    32,
+    "Блок except лише з pass: помилка мовчки ігнорується"
+   ],
+   [
+    "AC008",
+    "low",
+    39,
+    "Функція too_many має 8 параметрів (поріг 5)"
+   ],
+   [
+    "AC009",
+    "info",
+    39,
+    "Функція too_many без docstring"
+   ],
+   [
+    "AC006",
+    "medium",
+    43,
+    "Цикломатична складність 15 перевищує поріг 10"
+   ],
+   [
+    "AC007",
+    "medium",
+    65,
+    "Глибина вкладеності 7 перевищує поріг 4"
+   ],
+   [
+    "AC002",
+    "medium",
+    75,
+    "Блок except лише з pass: помилка мовчки ігнорується"
+   ],
+   [
+    "AC005",
+    "low",
+    81,
+    "Функція long_function має 58 рядків (поріг 50)"
+   ],
+   [
+    "AC009",
+    "info",
+    141,
+    "Функція fetch без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    151,
+    "Функція public_without_doc без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    155,
+    "Клас NoDoc без docstring"
+   ],
+   [
+    "AC003",
+    "medium",
+    164,
+    "Змінне значення за замовчуванням у функції inner"
+   ],
+   [
+    "AC009",
+    "info",
+    164,
+    "Функція inner без docstring"
+   ]
+  ]
+ },
+ "demo_data": {
+  "loc": 121,
+  "sloc": 94,
+  "max_complexity": 0,
+  "max_nesting": 0,
+  "syntax_error": null,
+  "functions": [],
+  "issues": []
+ },
+ "models": {
+  "loc": 131,
+  "sloc": 101,
+  "max_complexity": 0,
+  "max_nesting": 0,
+  "syntax_error": null,
+  "functions": [],
+  "issues": [
+   [
+    "AC009",
+    "info",
+    11,
+    "Клас Role без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    17,
+    "Клас Severity без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    24,
+    "Клас User без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    38,
+    "Клас Rule без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    56,
+    "Клас RuleSetting без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    66,
+    "Клас Analysis без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    86,
+    "Клас SourceFile без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    107,
+    "Клас Function без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    121,
+    "Клас Issue без docstring"
+   ]
+  ]
+ },
+ "security": {
+  "loc": 71,
+  "sloc": 53,
+  "max_complexity": 3,
+  "max_nesting": 1,
+  "syntax_error": null,
+  "functions": [
+   [
+    "hash_password",
+    22,
+    26,
+    1,
+    0,
+    1
+   ],
+   [
+    "verify_password",
+    29,
+    35,
+    2,
+    1,
+    2
+   ],
+   [
+    "create_token",
+    39,
+    42,
+    1,
+    0,
+    1
+   ],
+   [
+    "_decode",
+    45,
+    51,
+    3,
+    1,
+    1
+   ],
+   [
+    "get_current_user",
+    55,
+    65,
+    3,
+    1,
+    2
+   ],
+   [
+    "require_admin",
+    68,
+    71,
+    2,
+    1,
+    1
+   ]
+  ],
+  "issues": [
+   [
+    "AC009",
+    "info",
+    29,
+    "Функція verify_password без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    39,
+    "Функція create_token без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    55,
+    "Функція get_current_user без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    68,
+    "Функція require_admin без docstring"
+   ]
+  ]
+ },
+ "services_analyses": {
+  "loc": 104,
+  "sloc": 86,
+  "max_complexity": 13,
+  "max_nesting": 2,
+  "syntax_error": null,
+  "functions": [
+   [
+    "rule_configs",
+    12,
+    19,
+    4,
+    1,
+    1
+   ],
+   [
+    "save_analysis",
+    22,
+    36,
+    5,
+    1,
+    5
+   ],
+   [
+    "visible_query",
+    39,
+    44,
+    2,
+    1,
+    1
+   ],
+   [
+    "_iso",
+    47,
+    48,
+    2,
+    0,
+    1
+   ],
+   [
+    "_issues",
+    51,
+    52,
+    3,
+    0,
+    1
+   ],
+   [
+    "summary_dict",
+    55,
+    63,
+    4,
+    0,
+    1
+   ],
+   [
+    "detail_dict",
+    66,
+    79,
+    4,
+    1,
+    1
+   ],
+   [
+    "build_stats",
+    82,
+    104,
+    13,
+    2,
+    2
+   ]
+  ],
+  "issues": [
+   [
+    "AC009",
+    "info",
+    22,
+    "Функція save_analysis без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    55,
+    "Функція summary_dict без docstring"
+   ],
+   [
+    "AC009",
+    "info",
+    66,
+    "Функція detail_dict без docstring"
+   ],
+   [
+    "AC006",
+    "medium",
+    82,
+    "Цикломатична складність 13 перевищує поріг 10"
+   ],
+   [
+    "AC009",
+    "info",
+    82,
+    "Функція build_stats без docstring"
+   ]
+  ]
+ }
+}

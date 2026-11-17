@@ -1,0 +1,305 @@
+{
+  "id": N,
+  "title": "golden",
+  "sourceType": "file",
+  "status": "done",
+  "durationMs": 0,
+  "createdAt": "T",
+  "filesCount": 1,
+  "issuesCount": 26,
+  "maxComplexity": 15,
+  "score": 0,
+  "owner": "student@example.com",
+  "files": [
+    {
+      "path": "defects.py",
+      "loc": 167,
+      "sloc": 139,
+      "maxComplexity": 15,
+      "maxNesting": 7,
+      "syntaxError": null,
+      "functions": [
+        {
+          "name": "method",
+          "startLine": 16,
+          "endLine": 17,
+          "complexity": 1,
+          "nestingDepth": 0,
+          "params": 5
+        },
+        {
+          "name": "mutable",
+          "startLine": 20,
+          "endLine": 21,
+          "complexity": 1,
+          "nestingDepth": 0,
+          "params": 5
+        },
+        {
+          "name": "risky",
+          "startLine": 24,
+          "endLine": 36,
+          "complexity": 4,
+          "nestingDepth": 1,
+          "params": 1
+        },
+        {
+          "name": "too_many",
+          "startLine": 39,
+          "endLine": 40,
+          "complexity": 1,
+          "nestingDepth": 0,
+          "params": 8
+        },
+        {
+          "name": "branchy",
+          "startLine": 43,
+          "endLine": 62,
+          "complexity": 15,
+          "nestingDepth": 3,
+          "params": 2
+        },
+        {
+          "name": "deep",
+          "startLine": 65,
+          "endLine": 78,
+          "complexity": 7,
+          "nestingDepth": 7,
+          "params": 1
+        },
+        {
+          "name": "long_function",
+          "startLine": 81,
+          "endLine": 138,
+          "complexity": 1,
+          "nestingDepth": 0,
+          "params": 0
+        },
+        {
+          "name": "fetch",
+          "startLine": 141,
+          "endLine": 144,
+          "complexity": 2,
+          "nestingDepth": 2,
+          "params": 1
+        },
+        {
+          "name": "_private",
+          "startLine": 147,
+          "endLine": 148,
+          "complexity": 1,
+          "nestingDepth": 0,
+          "params": 0
+        },
+        {
+          "name": "public_without_doc",
+          "startLine": 151,
+          "endLine": 152,
+          "complexity": 1,
+          "nestingDepth": 0,
+          "params": 0
+        },
+        {
+          "name": "outer",
+          "startLine": 162,
+          "endLine": 167,
+          "complexity": 1,
+          "nestingDepth": 0,
+          "params": 0
+        },
+        {
+          "name": "inner",
+          "startLine": 164,
+          "endLine": 166,
+          "complexity": 2,
+          "nestingDepth": 1,
+          "params": 2
+        }
+      ],
+      "issues": [
+        {
+          "id": N,
+          "ruleId": "AC001",
+          "severity": "low",
+          "line": 2,
+          "message": "Імпорт sys не використовується"
+        },
+        {
+          "id": N,
+          "ruleId": "AC001",
+          "severity": "low",
+          "line": 3,
+          "message": "Імпорт js не використовується"
+        },
+        {
+          "id": N,
+          "ruleId": "AC001",
+          "severity": "low",
+          "line": 4,
+          "message": "Імпорт List не використовується"
+        },
+        {
+          "id": N,
+          "ruleId": "AC010",
+          "severity": "high",
+          "line": 8,
+          "message": "Секрет записано безпосередньо в коді"
+        },
+        {
+          "id": N,
+          "ruleId": "AC010",
+          "severity": "high",
+          "line": 9,
+          "message": "Секрет записано безпосередньо в коді"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 13,
+          "message": "Клас Config без docstring"
+        },
+        {
+          "id": N,
+          "ruleId": "AC010",
+          "severity": "high",
+          "line": 14,
+          "message": "Секрет записано безпосередньо в коді"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 16,
+          "message": "Функція method без docstring"
+        },
+        {
+          "id": N,
+          "ruleId": "AC003",
+          "severity": "medium",
+          "line": 20,
+          "message": "Змінне значення за замовчуванням у функції mutable"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 20,
+          "message": "Функція mutable без docstring"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 24,
+          "message": "Функція risky без docstring"
+        },
+        {
+          "id": N,
+          "ruleId": "AC004",
+          "severity": "critical",
+          "line": 26,
+          "message": "Використано eval() з довільним рядком"
+        },
+        {
+          "id": N,
+          "ruleId": "AC004",
+          "severity": "critical",
+          "line": 27,
+          "message": "Використано exec() з довільним рядком"
+        },
+        {
+          "id": N,
+          "ruleId": "AC002",
+          "severity": "medium",
+          "line": 28,
+          "message": "Порожній блок except без типу винятку"
+        },
+        {
+          "id": N,
+          "ruleId": "AC002",
+          "severity": "medium",
+          "line": 32,
+          "message": "Блок except лише з pass: помилка мовчки ігнорується"
+        },
+        {
+          "id": N,
+          "ruleId": "AC008",
+          "severity": "low",
+          "line": 39,
+          "message": "Функція too_many має 8 параметрів (поріг 5)"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 39,
+          "message": "Функція too_many без docstring"
+        },
+        {
+          "id": N,
+          "ruleId": "AC006",
+          "severity": "medium",
+          "line": 43,
+          "message": "Цикломатична складність 15 перевищує поріг 10"
+        },
+        {
+          "id": N,
+          "ruleId": "AC007",
+          "severity": "medium",
+          "line": 65,
+          "message": "Глибина вкладеності 7 перевищує поріг 4"
+        },
+        {
+          "id": N,
+          "ruleId": "AC002",
+          "severity": "medium",
+          "line": 75,
+          "message": "Блок except лише з pass: помилка мовчки ігнорується"
+        },
+        {
+          "id": N,
+          "ruleId": "AC005",
+          "severity": "low",
+          "line": 81,
+          "message": "Функція long_function має 58 рядків (поріг 50)"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 141,
+          "message": "Функція fetch без docstring"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 151,
+          "message": "Функція public_without_doc без docstring"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 155,
+          "message": "Клас NoDoc без docstring"
+        },
+        {
+          "id": N,
+          "ruleId": "AC003",
+          "severity": "medium",
+          "line": 164,
+          "message": "Змінне значення за замовчуванням у функції inner"
+        },
+        {
+          "id": N,
+          "ruleId": "AC009",
+          "severity": "info",
+          "line": 164,
+          "message": "Функція inner без docstring"
+        }
+      ]
+    }
+  ]
+}
