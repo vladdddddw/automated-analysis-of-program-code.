@@ -26,6 +26,7 @@ def extract_python_files(data: bytes) -> list[tuple[str, str]]:
         raise ArchiveError("Файл не є коректним .zip-архівом") from exc
 
     files: list[tuple[str, str]] = []
+    unsafe = 0
     total = 0
     for info in zf.infolist():
         if info.is_dir():
@@ -33,7 +34,8 @@ def extract_python_files(data: bytes) -> list[tuple[str, str]]:
         name = info.filename.replace("\\", "/")
         path = PurePosixPath(name)
         if path.is_absolute() or ".." in path.parts:
-            continue  # небезпечний шлях – пропускаємо
+            unsafe += 1  # небезпечний шлях – пропускаємо, але запам'ятовуємо для повідомлення
+            continue
         if path.suffix != ".py" or "__pycache__" in path.parts or any(p.startswith(".") for p in path.parts):
             continue
         if info.file_size > MAX_FILE_BYTES:
@@ -42,6 +44,8 @@ def extract_python_files(data: bytes) -> list[tuple[str, str]]:
             raw = fh.read(MAX_FILE_BYTES + 1)
         if len(raw) > MAX_FILE_BYTES:
             raise ArchiveError(f"Файл «{name}» більший за 1 МБ")
+        if b"\x00" in raw:
+            raise ArchiveError(f"Файл «{name}» містить недопустимий символ NUL")
         total += len(raw)
         if total > settings.max_archive_bytes:
             raise ArchiveError("Сумарний розмір файлів в архіві завеликий")
@@ -49,5 +53,7 @@ def extract_python_files(data: bytes) -> list[tuple[str, str]]:
         if len(files) > settings.max_archive_files:
             raise ArchiveError(f"В архіві забагато файлів .py (максимум {settings.max_archive_files})")
     if not files:
+        if unsafe:
+            raise ArchiveError("Архів містить лише небезпечні шляхи файлів (абсолютні або з «..»)")
         raise ArchiveError("В архіві немає файлів .py")
     return files

@@ -8,11 +8,22 @@ FastAPI + SQLAlchemy + PostgreSQL. Повний опис, запуск і роз
 python -m venv .venv && .venv\Scripts\activate
 pip install -r requirements-dev.txt
 uvicorn app.main:app --reload     # SQLite, http://localhost:8000/docs
-pytest                            # 45 тестів
+pytest                            # 59 тестів (45 + 10 модульних і 4 інтеграційних із лаби 11)
 ```
 
 Тест на PostgreSQL: `TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/db pytest`
 (таблиці в цій базі будуть перестворені!).
+
+### Функціональні тести працюючого сервісу (лабораторна 11)
+
+`tests/functional/run_functional.py` виконує 21 тест-кейс методом «чорної скриньки»: частину через REST API, частину –
+через інтерфейс у браузері Chrome (Playwright). Сервер має працювати, а фронтенд – бути зібраним (`STATIC_DIR`).
+
+```bash
+pip install playwright
+set BASE_URL=http://localhost:8000
+python tests/functional/run_functional.py --json results.json --shots shots
+```
 
 ## Змінні середовища
 

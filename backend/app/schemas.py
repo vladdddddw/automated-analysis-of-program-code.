@@ -22,6 +22,13 @@ class Credentials(BaseModel):
 class RegisterIn(Credentials):
     password: str = Field(min_length=6, max_length=128)
 
+    @field_validator("password")
+    @classmethod
+    def _not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("пароль не може складатися лише з пробілів")
+        return v
+
 
 class FileIn(BaseModel):
     path: str = Field(min_length=1, max_length=500)
@@ -33,6 +40,15 @@ class FileIn(BaseModel):
         v = v.strip().replace("\\", "/")
         if v.startswith("/") or ".." in v.split("/"):
             raise ValueError("недопустимий шлях файлу")
+        if not v.lower().endswith(".py"):
+            raise ValueError("приймаються лише файли .py")
+        return v
+
+    @field_validator("content")
+    @classmethod
+    def _content(cls, v: str) -> str:
+        if "\x00" in v:  # PostgreSQL не зберігає NUL у текстових полях
+            raise ValueError("код містить недопустимий символ NUL (U+0000)")
         return v
 
 
