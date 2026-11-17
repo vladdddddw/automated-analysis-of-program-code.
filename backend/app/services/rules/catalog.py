@@ -46,18 +46,24 @@ def _target_name(t: ast.AST) -> str | None:
 
 @register
 class UnusedImportRule(Rule):
+    """Імпорт, ім'я з якого ніде не використовується."""
+
     rule_id = "AC001"
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         for name, line in _unused_imports(ctx.tree):
             yield Finding(line, f"Імпорт {name} не використовується")
 
 
 @register
 class EmptyExceptRule(Rule):
+    """Блок except без типу винятку або лише з pass."""
+
     rule_id = "AC002"
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         for node in ast.walk(ctx.tree):
             if not isinstance(node, ast.ExceptHandler):
                 continue
@@ -69,9 +75,12 @@ class EmptyExceptRule(Rule):
 
 @register
 class MutableDefaultRule(Rule):
+    """Список, словник чи множина як значення параметра за замовчуванням."""
+
     rule_id = "AC003"
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         for node, _ in ctx.functions:
             defaults = [*node.args.defaults, *node.args.kw_defaults]
             if any(_is_mutable_default(d) for d in defaults if d is not None):
@@ -80,9 +89,12 @@ class MutableDefaultRule(Rule):
 
 @register
 class EvalExecRule(Rule):
+    """Виклик eval() або exec()."""
+
     rule_id = "AC004"
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         for node in ast.walk(ctx.tree):
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in {"eval", "exec"}:
                 yield Finding(node.lineno, f"Використано {node.func.id}() з довільним рядком")
@@ -90,10 +102,13 @@ class EvalExecRule(Rule):
 
 @register
 class LongFunctionRule(Rule):
+    """Функція довша за поріг (рядків)."""
+
     rule_id = "AC005"
     default_threshold = 50
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         limit = self.threshold(ctx)
         for node, info in ctx.functions:
             length = info.end_line - info.start_line + 1
@@ -103,10 +118,13 @@ class LongFunctionRule(Rule):
 
 @register
 class HighComplexityRule(Rule):
+    """Цикломатична складність функції вища за поріг."""
+
     rule_id = "AC006"
     default_threshold = 10
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         limit = self.threshold(ctx)
         for node, info in ctx.functions:
             if info.complexity > limit:
@@ -115,10 +133,13 @@ class HighComplexityRule(Rule):
 
 @register
 class DeepNestingRule(Rule):
+    """Глибина вкладеності блоків вища за поріг."""
+
     rule_id = "AC007"
     default_threshold = 4
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         limit = self.threshold(ctx)
         for node, info in ctx.functions:
             if info.nesting_depth > limit:
@@ -127,10 +148,13 @@ class DeepNestingRule(Rule):
 
 @register
 class TooManyParamsRule(Rule):
+    """Кількість параметрів функції вища за поріг."""
+
     rule_id = "AC008"
     default_threshold = 5
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         limit = self.threshold(ctx)
         for node, info in ctx.functions:
             if info.params > limit:
@@ -139,9 +163,12 @@ class TooManyParamsRule(Rule):
 
 @register
 class MissingDocstringRule(Rule):
+    """Публічна функція чи клас без документаційного рядка."""
+
     rule_id = "AC009"
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         for node, _ in ctx.functions:
             if not node.name.startswith("_") and ast.get_docstring(node) is None:
                 yield Finding(node.lineno, f"Функція {node.name} без docstring")
@@ -152,9 +179,12 @@ class MissingDocstringRule(Rule):
 
 @register
 class HardcodedSecretRule(Rule):
+    """Пароль, токен чи ключ, записані рядком безпосередньо в коді."""
+
     rule_id = "AC010"
 
     def check(self, ctx: AnalysisContext) -> Iterator[Finding]:
+        """Повертає знайдені проблеми."""
         for node in ast.walk(ctx.tree):
             if not isinstance(node, (ast.Assign, ast.AnnAssign)):
                 continue

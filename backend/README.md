@@ -8,7 +8,7 @@ FastAPI + SQLAlchemy + PostgreSQL. Повний опис, запуск і роз
 python -m venv .venv && .venv\Scripts\activate
 pip install -r requirements-dev.txt
 uvicorn app.main:app --reload     # SQLite, http://localhost:8000/docs
-pytest                            # 59 тестів (45 + 10 модульних і 4 інтеграційних із лаби 11)
+pytest                            # 86 тестів (лаби 8–12)
 ```
 
 Тест на PostgreSQL: `TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/db pytest`
@@ -36,3 +36,11 @@ python tests/functional/run_functional.py --json results.json --shots shots
 | `CORS_ORIGINS` | `*` | дозволені джерела через кому |
 | `TOKEN_TTL_MINUTES` | `720` | термін дії токена |
 | `STATIC_DIR` | `backend/static` | папка зі зібраним фронтендом (у Docker-образі) |
+
+## Архітектура (лабораторна 12)
+
+- **Strategy** – правила перевірки: `app/services/rules/` (інтерфейс `Rule`, 10 класів у `catalog.py`, реєстр).
+  Нове правило: клас із `@register`, аналізатор змінювати не потрібно.
+- **Factory Method** – експорт звітів: `app/services/exporters.py` (`ReportCreator` → `JsonReportCreator`,
+  `HtmlReportCreator`, `CsvReportCreator`; формат вибирає `get_creator(format)`).
+- Еталонні тести `tests/test_lab12_golden.py` порівнюють результати з еталоном, знятим до рефакторингу.

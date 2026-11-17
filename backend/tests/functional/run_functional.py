@@ -323,6 +323,17 @@ def tc021():
         return f"HTTP {r.status_code}", r.status_code == 422
 
 
+@case("TC-022", "Експорт звіту у CSV (формат додано в лабораторній 12)", "API", True, "HTTP 200, text/csv, перший рядок – заголовок, далі – зауваження")
+def tc022():
+    with api() as c:
+        h = login(c, STUDENT)
+        aid = analyze(c, h, [{"path": "a.py", "content": SAMPLE}], title="csv-check").json()["id"]
+        r = c.get(f"/api/analyses/{aid}/export", params={"format": "csv"}, headers=h)
+        lines = r.text.strip().split("\n")
+        ok = r.status_code == 200 and r.headers["content-type"].startswith("text/csv") and lines[0] == "file,line,rule,severity,message" and len(lines) > 1
+        return f"HTTP {r.status_code}, {r.headers['content-type']}, рядків: {len(lines)}", ok
+
+
 # ---------------------------------------------------------------- запуск
 def main():
     global SHOTS

@@ -1,6 +1,4 @@
 """CRUD аналізів, завантаження архіву, статистика й експорт."""
-import json
-
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
@@ -14,7 +12,7 @@ from ..schemas import AnalysisIn
 from ..services import analyses as svc
 from ..services.analyzer import analyze_files
 from ..services.archive import ArchiveError, extract_python_files
-from ..services.reports import analysis_to_html
+from ..services.exporters import UnknownFormatError, get_creator
 
 router = APIRouter(prefix="/api", tags=["analyses"])
 
@@ -75,17 +73,15 @@ def delete_analysis(analysis_id: int, user: User = Depends(get_current_user), db
 
 
 @router.get("/analyses/{analysis_id}/export")
-def export_analysis(analysis_id: int, format: str = Query("json", pattern="^(json|html)$"),
+def export_analysis(analysis_id: int, format: str = Query("json"),
                     user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    a = _get_visible(db, user, analysis_id)
-    if format == "html":
-        return Response(analysis_to_html(a), media_type="text/html",
-                        headers={"Content-Disposition": f'attachment; filename="analysis-{a.id}.html"'})
-    data = svc.detail_dict(a)
-    for f in data["files"]:
-        f.pop("content", None)
-    return Response(json.dumps(data, ensure_ascii=False, indent=2), media_type="application/json",
-                    headers={"Content-Disposition": f'attachment; filename="analysis-{a.id}.json"'})
+    try:
+        creator = get_creator(format)  # фабричний метод вибирає творця за форматом
+    except UnknownFormatError as exc:
+        raise ApiError(422, str(exc)) from exc
+    report = creator.export(_get_visible(db, user, analysis_id))
+    return Response(report.content, media_type=report.media_type,
+                    headers={"Content-Disposition": f'attachment; filename="{report.filename}"'})
 
 
 @router.get("/stats")

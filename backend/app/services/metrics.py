@@ -10,6 +10,8 @@ from dataclasses import dataclass, field
 
 @dataclass
 class RuleConfig:
+    """Налаштування правила з БД: чи ввімкнене, яка серйозність і поріг."""
+
     enabled: bool = True
     severity: str = "medium"
     threshold: int | None = None
@@ -17,6 +19,8 @@ class RuleConfig:
 
 @dataclass
 class FunctionInfo:
+    """Метрики однієї функції."""
+
     name: str
     start_line: int
     end_line: int
@@ -27,6 +31,8 @@ class FunctionInfo:
 
 @dataclass
 class IssueInfo:
+    """Знайдена проблема з кодом правила та серйозністю."""
+
     rule_id: str
     severity: str
     line: int
@@ -35,6 +41,8 @@ class IssueInfo:
 
 @dataclass
 class FileResult:
+    """Результат аналізу одного файлу."""
+
     path: str
     content: str
     loc: int
@@ -48,6 +56,8 @@ class FileResult:
 
 @dataclass
 class AnalysisResult:
+    """Результат аналізу набору файлів."""
+
     files: list[FileResult]
     duration_ms: int
 
@@ -123,6 +133,7 @@ def nesting_depth(func: ast.AST) -> int:
 
 
 def count_params(func: ast.AST) -> int:
+    """Кількість параметрів без self/cls; *args і **kwargs рахуються."""
     a = func.args
     names = [x.arg for x in (*a.posonlyargs, *a.args, *a.kwonlyargs)]
     count = len([n for n in names if n not in {"self", "cls"}])
